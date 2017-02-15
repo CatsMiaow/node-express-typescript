@@ -1,0 +1,14 @@
+{
+  "extends": "tslint-microsoft-contrib",
+  "rules": {
+    // https://github.com/Microsoft/vscode-tslint/issues/70
+    "no-for-in-array": false,
+    "restrict-plus-operands": false,
+
+    // https://github.com/Microsoft/tslint-microsoft-contrib/issues/168
+    "no-relative-imports": false,
+
+    // https://github.com/Microsoft/tslint-microsoft-contrib/issues/123
+    "no-backbone-get-set-outside-model": false
+  }
+}
