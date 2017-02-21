@@ -3,6 +3,7 @@
  */
 import * as domain from 'domain';
 import * as express from 'express';
+import { config } from './config';
 import { Err } from './utils';
 
 // <middleware>
@@ -34,7 +35,7 @@ class App {
 
   private init() {
     this.express.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
-      const d: domain.Domain = domain.create();
+      const d = domain.create();
       d.add(req);
       d.add(res);
       d.on('error', next);
@@ -42,7 +43,7 @@ class App {
     });
 
     this.express.engine('html', hbs({ extname: '.html' }));
-    this.express.set('views', './views');
+    this.express.set('views', `${config.cwd}/views`);
     this.express.set('view engine', 'html');
     this.express.set('trust proxy', 1); // secure: true
   }
@@ -66,7 +67,7 @@ class App {
       saveUninitialized: true,
       cookie: { secure: true }
     }));
-    this.express.use(express.static('./public'));
+    this.express.use(express.static(`${config.cwd}/public`));
     this.express.use(helmet());
 
     // 테스트 환경일 때 csrf 예외
@@ -86,8 +87,7 @@ class App {
   private exception() {
     // catch 404 and forwarding to error handler
     this.express.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
-      const err: Err = new Err('NotFound', 404);
-      err.status = 404;
+      const err = new Err('NotFound', 404);
       next(err);
     });
 
@@ -103,7 +103,7 @@ class App {
 
       if (err.status === 500) {
         console.error(err);
-        const message: string = `${req.method}: ${req.originalUrl}\n` +
+        const message = `${req.method}: ${req.originalUrl}\n` +
           `IP> ${req.ip}, Body> ${JSON.stringify(req.body)}\n` +
           `Headers> ${JSON.stringify(req.headers)}\n${err.stack}`;
 
@@ -117,4 +117,4 @@ class App {
   }
 }
 
-export const app: express.Application = new App().express;
+export const app = new App().express;
