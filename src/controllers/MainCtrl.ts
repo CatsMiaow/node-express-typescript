@@ -1,10 +1,10 @@
 /**
  * controllers/MainCtrl.ts
  */
-import { Request, Response } from 'express';
+import { RequestHandler } from 'express';
 
 export class MainCtrl {
-  public render(req: Request, res: Response) {
+  public render: RequestHandler = (req, res) => {
     res.render('index', { content: 'Hello, world!' });
   }
 }

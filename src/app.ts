@@ -34,13 +34,13 @@ class App {
   }
 
   private init() {
-    this.express.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+    this.express.use(<express.RequestHandler>((req, res, next) => {
       const d = domain.create();
       d.add(req);
       d.add(res);
       d.on('error', next);
       d.run(next);
-    });
+    }));
 
     this.express.engine('html', hbs({ extname: '.html' }));
     this.express.set('views', `${config.cwd}/views`);
@@ -73,10 +73,10 @@ class App {
     // 테스트 환경일 때 csrf 예외
     if (this.express.get('env') !== 'test') {
       this.express.use(csrf());
-      this.express.use((req, res, next) => {
+      this.express.use(<express.RequestHandler>((req, res, next) => {
         res.cookie('XSRF-TOKEN', req.csrfToken());
         next();
-      });
+      }));
     }
   }
 
@@ -86,13 +86,13 @@ class App {
 
   private exception() {
     // catch 404 and forwarding to error handler
-    this.express.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+    this.express.use(<express.RequestHandler>((req, res, next) => {
       const err = new Err('NotFound', 404);
       next(err);
-    });
+    }));
 
     // will print stacktrace
-    this.express.use((err: Err, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    this.express.use(<express.ErrorRequestHandler>((err, req, res, next) => {
       if (res.headersSent) {
         return next(err);
       }
@@ -113,7 +113,7 @@ class App {
       }
 
       res.status(err.status || 400).json({ message: err.message });
-    });
+    }));
   }
 }
 
