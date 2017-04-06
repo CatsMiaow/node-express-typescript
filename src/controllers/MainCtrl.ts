@@ -9,4 +9,4 @@ export class MainCtrl {
   }
 }
 
-export const mainCtrl = new MainCtrl();
+export const mainCtrl: MainCtrl = new MainCtrl();

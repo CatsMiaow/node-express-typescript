@@ -1,4 +1,7 @@
 {
   "extends": "dtslint/dtslint.json",
-  "rules": {}
+  "rules": {
+    // tslint v5.0.0 feature
+    "no-unnecessary-callback-wrapper": false
+  }
 }

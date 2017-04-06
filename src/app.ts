@@ -33,14 +33,14 @@ class App {
     this.exception(); // 예외처리
   }
 
-  private init() {
-    this.express.use(<express.RequestHandler>((req, res, next) => {
-      const d = domain.create();
+  private init(): void {
+    this.express.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+      const d: domain.Domain = domain.create();
       d.add(req);
       d.add(res);
       d.on('error', next);
       d.run(next);
-    }));
+    });
 
     this.express.engine('html', hbs({ extname: '.html' }));
     this.express.set('views', `${config.cwd}/views`);
@@ -48,7 +48,7 @@ class App {
     this.express.set('trust proxy', 1); // secure: true
   }
 
-  private middleware() {
+  private middleware(): void {
     this.express.use(morgan(':remote-addr - ":method :url HTTP/:http-version" ' +
       ':status :res[content-length] ":referrer" ":user-agent"'));
     this.express.use(compress({
@@ -73,26 +73,26 @@ class App {
     // 테스트 환경일 때 csrf 예외
     if (this.express.get('env') !== 'test') {
       this.express.use(csrf());
-      this.express.use(<express.RequestHandler>((req, res, next) => {
+      this.express.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
         res.cookie('XSRF-TOKEN', req.csrfToken());
         next();
-      }));
+      });
     }
   }
 
-  private router() {
+  private router(): void {
     this.express.use('/', mainRoute);
   }
 
-  private exception() {
+  private exception(): void {
     // catch 404 and forwarding to error handler
-    this.express.use(<express.RequestHandler>((req, res, next) => {
-      const err = new Err('NotFound', 404);
+    this.express.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+      const err: Err = new Err('NotFound', 404);
       next(err);
-    }));
+    });
 
     // will print stacktrace
-    this.express.use(<express.ErrorRequestHandler>((err, req, res, next) => {
+    this.express.use((err: Err, req: express.Request, res: express.Response, next: express.NextFunction) => {
       if (res.headersSent) {
         return next(err);
       }
@@ -103,7 +103,7 @@ class App {
 
       if (err.status === 500) {
         console.error(err);
-        const message = `${req.method}: ${req.originalUrl}\n` +
+        const message: string = `${req.method}: ${req.originalUrl}\n` +
           `IP> ${req.ip}, Body> ${JSON.stringify(req.body)}\n` +
           `Headers> ${JSON.stringify(req.headers)}\n${err.stack}`;
 
@@ -113,8 +113,8 @@ class App {
       }
 
       res.status(err.status || 400).json({ message: err.message });
-    }));
+    });
   }
 }
 
-export const app = new App().express;
+export const app: express.Application = new App().express;
