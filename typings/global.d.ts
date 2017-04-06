@@ -7,7 +7,9 @@ declare global {
       }
     }
 
-    interface Human {}
+    interface Human {
+      body: string;
+    }
 }
 
 export { };

@@ -20,7 +20,7 @@ import * as morgan from 'morgan';
 
 // <router>
 import { mainRoute } from './routes';
-//</router>
+// </router>
 
 class App {
   public express: express.Application;
